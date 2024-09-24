@@ -7,14 +7,17 @@ import pandas as pd
 import numpy as np
 import ipywidgets
 
-def browse_images_FFT(video,interval=1,muperpix=1):
+def browse_images_FFT(video,interval=1,muperpix=1, start_frame=0, end_frame=None):
     '''
     Expect pims video object
     
     construct widget to explore DDM signal
     '''
-    frames=len(video)
     
+    frames=len(video)
+    if end_frame is None:
+        end_frame=frames
+
     try:
         video=video[:,:,1]
     except:
@@ -73,7 +76,7 @@ def browse_images_FFT(video,interval=1,muperpix=1):
         plt.ylabel('Power Spectrum')
         plt.show()
         
-    w=interactive(view_image, framenum=(0,frames),delta=(1,frames-100))
+    w=interactive(view_image, framenum=(start_frame,end_frame),delta=(1,end_frame-100))
     return w
 
 def azimuthalAverage(image, center=None):
@@ -115,7 +118,7 @@ def azimuthalAverage(image, center=None):
 
     return radial_prof
 
-def _calculate_iq_delta(video,delta,naverage=None):
+def _calculate_iq_delta(video,delta,naverage=None, start_frame=0, end_frame=None):
     '''
     Expect pims video object and delta frame interval to consider
     
@@ -123,6 +126,9 @@ def _calculate_iq_delta(video,delta,naverage=None):
     '''
     
     frames=len(video)
+    if end_frame is None:
+        end_frame=frames
+
     progress_dt.value=str(delta)
     min(video.frame_shape[:2])    
     iq=[]
@@ -135,7 +141,7 @@ def _calculate_iq_delta(video,delta,naverage=None):
     if naverage is None:
         naverage=frames-delta
     
-    framelist=range(0,frames-delta,int((frames-delta)/naverage))
+    framelist=range(start_frame,end_frame-delta,int((end_frame-delta)/naverage))
     
     for frame in framelist:
         
@@ -157,7 +163,7 @@ def _calculate_iq_delta(video,delta,naverage=None):
         
     return np.mean(iq,0)
 
-def _calculate_iq_delta_multi(video,deltalist,naverage=None):
+def _calculate_iq_delta_multi(video,deltalist,naverage=None, start_frame=0, end_frame=None):
     '''
     Expect pims video object and delta frame interval list to consider
     
@@ -165,14 +171,17 @@ def _calculate_iq_delta_multi(video,deltalist,naverage=None):
     '''
 
     frames=len(video)
+    if end_frame is None:
+        end_frame=frames
+
     iq_matrix=[]
         
     for delta in deltalist:
-        iq_matrix.append(_calculate_iq_delta(video,delta,naverage))
+        iq_matrix.append(_calculate_iq_delta(video,delta,naverage, start_frame, end_frame))
     
     return np.array(iq_matrix)
 
-def calculate_DDM(video,naverage=None,numdt=None, interval=1,muperpix=1):
+def calculate_DDM(video,naverage=None,numdt=None, interval=1,muperpix=1, start_frame=0, end_frame=None):
     '''
     Expect pims video object
     naverage : number of frame pair to average over for each delta frame
@@ -199,7 +208,11 @@ def calculate_DDM(video,naverage=None,numdt=None, interval=1,muperpix=1):
         naverage=10
     
     frames=len(video)
+    if end_frame is None:
+        end_frame=frames
     
+    frames=end_frame-start_frame
+
     frame_len=min(video.frame_shape[:2])
 
     
@@ -208,7 +221,7 @@ def calculate_DDM(video,naverage=None,numdt=None, interval=1,muperpix=1):
     
     deltalistsec=np.transpose(np.array(deltalist)*interval)
 
-    iq=_calculate_iq_delta_multi(video,deltalist,naverage)
+    iq=_calculate_iq_delta_multi(video,deltalist,naverage, start_frame, end_frame)
     
     xax=np.array(range(iq.shape[1]))*2*3.14/(muperpix*frame_len)
     
