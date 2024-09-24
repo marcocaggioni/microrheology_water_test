@@ -425,7 +425,7 @@ def explore_iq_dt(video, interval=1):
         plt.xscale('log')
         plt.ylabel('f(q,dt) [a.u.]')
         plt.xlabel('Delta t')
-      
+        plt.show()
         
         
     w=interactive(view_plot, selectq=(1,len(iq2[1,:]-1)),deltat=(1,len(deltalistsec)-1))
