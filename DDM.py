@@ -404,7 +404,7 @@ def explore_iq_dt(video, interval=1):
 
 
                  
-        result = DDMmod.fit(iq2[1:,selectq], x=deltalistsec[1:], amp=max(iq2[1:,selectq])-min(iq2[1:,selectq]),
+        result = DDMmod.fit(iq2[0:,selectq], x=deltalistsec[0:], amp=max(iq2[1:,selectq])-min(iq2[1:,selectq]),
                             off=min(iq2[1:,selectq]),
                             tau=np.mean(deltalistsec[1:]));
 
@@ -415,7 +415,7 @@ def explore_iq_dt(video, interval=1):
         off=result.params['off'].value
         amp=result.params['amp'].value
 
-        plt.plot(deltalistsec[1:], result.best_fit, 'r-')
+        plt.plot(deltalistsec[0:], result.best_fit, 'r-')
         plt.axvline(deltat*interval, color='k', linestyle='--')
 
         plt.subplot(1,3,3)
