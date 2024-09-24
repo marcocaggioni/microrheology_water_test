@@ -27,8 +27,8 @@ def browse_images_FFT(video,interval=1,muperpix=1):
         maxpix=min(video.frame_shape[:2])
 
         
-        im1=video[framenum][:maxpix,:maxpix].astype(np.float)
-        im2=video[framenum+delta][:maxpix,:maxpix].astype(np.float)
+        im1=video[framenum][:maxpix,:maxpix].astype(float)
+        im2=video[framenum+delta][:maxpix,:maxpix].astype(float)
         imdiff=im2-im1
 
         F1=fftpack.fft2(imdiff)
@@ -142,8 +142,8 @@ def _calculate_iq_delta(video,delta,naverage=None):
         maxpix=min(video.frame_shape[:2])
 
         
-        im1=video[frame][:maxpix,:maxpix].astype(np.float)
-        im2=video[frame+delta][:maxpix,:maxpix].astype(np.float)
+        im1=video[frame][:maxpix,:maxpix].astype(float)
+        im2=video[frame+delta][:maxpix,:maxpix].astype(float)
         imdiff=im2-im1
 
         F1=fftpack.fft2(imdiff)
