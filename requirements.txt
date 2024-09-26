@@ -8,3 +8,5 @@ pims
 jinja2
 lmfit
 MoviePy
+trackpy
+openpyxl
